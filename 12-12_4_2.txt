@@ -1,0 +1,24 @@
+(4)12.4 第二题
+
+子进程调用do_exit(int error_code) 函数 ( kern/process/proc.c/line449)
+ 
+设置子进程的error_code，以及子进程的状态
+current->state = PROC_ZOMBIE;
+current->exit_code = error_code;
+ 
+父进程调用do_wait(int pid, int *code_store) 函数（kern/process/proc.c/line698）
+ 
+repeat:
+ if (pid != 0) {
+        proc = find_proc(pid);
+找到退出的子进程PCB
+ 
+found:
+    if (proc == idleproc || proc == initproc) {
+        panic("wait idleproc or initproc.\n");
+    }
+    if (code_store != NULL) {
+        *code_store = proc->exit_code;
+    }
+ 
+把子进程的error_code存回父进程的返回值
